@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>剧现 - AI 故事开发工作台内测申请</title>
+<meta name="description" content="剧现是面向编剧、导演、制片、游戏策划和内容创作者的 AI 故事开发工作台，支持灵感探讨、剧本评估、长程生成与结构化记忆。申请内测资格，审核通过后短信获取专属邀请码。">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f4;
+  --surface:#f4f1eb;
+  --ink:#1a1612;
+  --ink-2:#2e2922;
+  --ink-3:#524b42;
+  --ink-4:#8a8279;
+  --ink-5:#b5afa6;
+  --rule:#e4e0d9;
+  --accent:#1d2552;
+  --accent-2:#2a3573;
+  --accent-bg:rgba(29,37,82,0.06);
+  --danger:#b8421a;
+  --danger-bg:rgba(184,66,26,0.05);
+  --green:#2d6a4f;
+  --green-bg:rgba(45,106,79,0.06);
+  --serif:'Noto Serif SC','Songti SC',serif;
+  --sans:'Noto Sans SC','PingFang SC',sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:17px;scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
+@media(max-width:900px){html{font-size:16.5px;}}
+@media(max-width:640px){html{font-size:16px;}}
+@media(max-width:380px){html{font-size:15px;}}
+body{
+  background:var(--bg);color:var(--ink-3);font-family:var(--sans);
+  line-height:1.85;letter-spacing:0.03em;overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 25% 15%,rgba(29,37,82,0.025) 0,transparent 40%),
+    radial-gradient(circle at 80% 80%,rgba(45,106,79,0.022) 0,transparent 45%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+::selection{background:rgba(29,37,82,0.14);color:var(--ink);}
+a{color:inherit;text-decoration:none;}
+button,input,select,textarea{font:inherit;}
+
+/* ═══ Nav ═══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1.1rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(250,248,244,0.9);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transition:all 0.4s var(--ease);
+}
+nav.scrolled{padding:0.8rem 3rem;border-bottom:1px solid var(--rule);}
+.nav-logo{
+  display:flex;align-items:center;gap:0.7rem;
+  color:var(--ink);
+}
+.nav-logo img{
+  height:36px;width:auto;display:block;
+  transition:height 0.4s var(--ease);
+}
+nav.scrolled .nav-logo img{height:30px;}
+.nav-logo span{
+  font-size:0.6rem;font-weight:400;color:var(--ink-5);
+  letter-spacing:0.12em;
+  padding-left:0.6rem;border-left:1px solid var(--rule);
+}
+.nav-cta{
+  font-family:var(--sans);font-size:0.7rem;font-weight:500;
+  color:var(--ink);background:transparent;
+  border:1px solid var(--ink);
+  padding:0.5rem 1.4rem;border-radius:0;
+  cursor:pointer;transition:all 0.25s ease;letter-spacing:0.08em;
+}
+.nav-cta:hover{background:var(--ink);color:var(--bg);}
+
+/* ═══ Hero ═══ */
+.hero{
+  min-height:auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:3rem;align-items:center;
+  padding:6rem 3rem 4.5rem;
+  max-width:1080px;margin:0 auto;
+  position:relative;
+}
+.hero::before{
+  content:'剧';
+  position:absolute;
+  right:-2rem;bottom:-2rem;
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(14rem,28vw,24rem);
+  color:var(--ink);opacity:0.025;
+  line-height:0.85;letter-spacing:-0.04em;
+  pointer-events:none;user-select:none;z-index:0;
+}
+.hero > *{position:relative;z-index:1;}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding:6rem 2rem 3rem;}.hero::before{display:none;}}
+.hero-copy{max-width:560px;}
+.hero-eyebrow{
+  font-size:0.7rem;font-weight:500;color:var(--accent);
+  letter-spacing:0.28em;
+  margin-bottom:1.8rem;
+  display:flex;align-items:center;gap:0.8rem;
+}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--accent);}
+.hero h1{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  line-height:1.5;color:var(--ink);
+  letter-spacing:0.04em;margin-bottom:1.5rem;
+}
+.hero-text{
+  font-size:0.94rem;color:var(--ink-4);
+  line-height:2;letter-spacing:0.04em;margin-bottom:1.8rem;
+}
+.hero-hint{font-size:0.7rem;color:var(--ink-5);margin-top:0.9rem;letter-spacing:0.06em;}
+.hero-actions{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;}
+
+/* Hero card stack */
+.hero-stack{
+  position:relative;height:500px;min-width:0;
+  perspective:1200px;
+}
+.stack-card{
+  position:absolute;width:260px;padding:1.5rem 1.4rem;
+  background:var(--bg);border:1px solid var(--rule);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.6) inset,
+    0 16px 40px rgba(26,22,18,0.1),
+    0 4px 12px rgba(26,22,18,0.05);
+  transition:transform 0.5s var(--ease),box-shadow 0.5s var(--ease);
+  cursor:pointer;
+  transform-origin:center top;
+}
+.stack-card:hover{
+  z-index:10!important;
+  transform:rotate(0deg) scale(1.04)!important;
+  box-shadow:0 28px 60px rgba(26,22,18,0.18);
+}
+.sc-tag{
+  font-family:'Noto Sans Mono','Menlo',monospace;
+  font-size:0.6rem;font-weight:600;
+  color:var(--accent);letter-spacing:0.18em;
+  margin-bottom:0.8rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.sc-tag::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--accent);
+}
+.stack-card h4{
+  font-family:var(--serif);font-size:1.1rem;font-weight:700;
+  color:var(--ink);margin-bottom:1rem;
+  letter-spacing:0.04em;line-height:1.4;
+}
+.stack-card ul{list-style:none;}
+.stack-card li{
+  font-size:0.78rem;color:var(--ink-3);
+  line-height:1.9;letter-spacing:0.03em;
+  padding:0.15rem 0;
+  border-bottom:1px dashed var(--rule);
+}
+.stack-card li:last-child{border-bottom:none;}
+.stack-card li b{color:var(--ink);font-weight:600;}
+.stack-card.card-1{top:0;left:0;transform:rotate(-5deg);z-index:4;}
+.stack-card.card-2{top:16%;left:11%;transform:rotate(3deg);z-index:3;}
+.stack-card.card-2 .sc-tag{color:#8a5a3a;}
+.stack-card.card-2 .sc-tag::before{background:#8a5a3a;}
+.stack-card.card-3{top:32%;left:22%;transform:rotate(-2deg);z-index:2;}
+.stack-card.card-3 .sc-tag{color:#5a7a56;}
+.stack-card.card-3 .sc-tag::before{background:#5a7a56;}
+.stack-card.card-4{top:48%;left:33%;transform:rotate(5deg);z-index:1;}
+.stack-card.card-4 .sc-tag{color:var(--green);}
+.stack-card.card-4 .sc-tag::before{background:var(--green);}
+.stack-card.card-4 ul li b{color:var(--green);}
+@media(max-width:900px){
+  .hero-stack{
+    height:auto;display:flex;
+    gap:0.9rem;margin:1.4rem -2rem 0;
+    padding:0.4rem 2rem 0.6rem;
+    overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .hero-stack::-webkit-scrollbar{display:none;}
+  .stack-card{
+    position:relative;flex:0 0 240px;width:240px;
+    top:auto;left:auto;transform:none!important;
+    padding:1.3rem 1.2rem;
+    scroll-snap-align:start;
+  }
+  .stack-card:hover{
+    transform:none!important;
+    box-shadow:0 16px 40px rgba(26,22,18,0.1),0 4px 12px rgba(26,22,18,0.05);
+  }
+  .stack-card h4{font-size:1rem;margin-bottom:0.7rem;}
+  .stack-card li{font-size:0.74rem;line-height:1.8;}
+}
+.btn-main{
+  font-family:var(--sans);font-size:0.86rem;font-weight:600;
+  color:#fff;background:var(--accent);border:1px solid var(--accent);
+  padding:0.9rem 2.6rem;border-radius:4px;cursor:pointer;
+  transition:all 0.25s ease;letter-spacing:0.06em;
+}
+.btn-main:hover{background:#141a3d;border-color:#141a3d;transform:translateY(-1px);box-shadow:0 4px 16px rgba(29,37,82,0.22);}
+.btn-ghost{
+  font-family:var(--sans);font-size:0.86rem;font-weight:400;
+  color:var(--ink-4);background:none;border:none;
+  padding:0.85rem 0;cursor:pointer;
+  transition:color 0.2s ease;letter-spacing:0.02em;
+}
+.btn-ghost:hover{color:var(--ink);}
+
+/* Hero entrance */
+.hero-copy .hero-eyebrow{animation:up .7s var(--ease) .05s both;}
+.hero-copy h1{animation:up .7s var(--ease) .15s both;}
+.hero-copy .hero-text{animation:up .7s var(--ease) .25s both;}
+.hero-copy .hero-actions{animation:up .7s var(--ease) .35s both;}
+.hero-copy .hero-hint{animation:up .7s var(--ease) .42s both;}
+.hero-stack{animation:up .8s var(--ease) .3s both;}
+@keyframes up{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══ Layout ═══ */
+.wrap{max-width:1080px;margin:0 auto;padding:0 3rem;}
+.sec{padding:5rem 0;}
+.eyebrow{
+  font-family:var(--serif);
+  font-size:0.7rem;font-weight:500;color:var(--accent);
+  letter-spacing:0.25em;margin-bottom:1.1rem;
+  display:flex;align-items:center;gap:0.7rem;
+}
+.eyebrow::before{content:'';width:1.5px;height:1em;background:var(--accent);flex-shrink:0;}
+.sec-title{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(1.5rem,3.2vw,2rem);
+  color:var(--ink);line-height:1.55;letter-spacing:0.05em;
+  margin-bottom:1.4rem;
+}
+.sec-body{
+  font-size:0.94rem;color:var(--ink-4);line-height:2;letter-spacing:0.04em;
+  margin-bottom:0.4rem;
+}
+
+/* ═══ Highlight (mark-like) ═══ */
+.big{
+  background:var(--accent);
+  color:var(--bg);
+  font-family:inherit;font-weight:inherit;
+  font-size:inherit;line-height:inherit;letter-spacing:inherit;
+  padding:0.06em 0.06em;
+  margin:0;
+  border-radius:1px;
+  display:inline;
+  text-decoration:none;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+}
+.final h2 .big{
+  background:var(--bg);
+  color:var(--ink);
+}
+
+/* ═══ Pullquote ═══ */
+.pullquote{
+  font-family:var(--serif);font-size:clamp(1rem,2vw,1.2rem);
+  font-weight:500;color:var(--ink-2);
+  line-height:1.85;letter-spacing:0.06em;
+  margin:2.4rem 0;padding:1.4rem 0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  position:relative;
+}
+.pullquote::before{
+  content:'\201C';
+  position:absolute;top:0.8rem;left:-0.2rem;
+  font-family:var(--serif);font-size:2.4rem;
+  color:var(--accent);opacity:0.2;line-height:1;
+}
+
+/* ═══ Problem ═══ */
+.problem-body{
+  font-size:0.94rem;color:var(--ink-3);line-height:2;
+  letter-spacing:0.04em;
+  margin-bottom:0.5rem;
+}
+.problem-body:last-of-type{margin-bottom:0;}
+.pain-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  margin:2.2rem 0;
+  border:1px solid var(--rule);background:var(--rule);
+}
+@media(max-width:780px){.pain-grid{grid-template-columns:repeat(2,1fr);}}
+.pain-card{
+  padding:1.4rem 1.2rem;background:var(--bg);
+  display:flex;flex-direction:column;gap:0.55rem;
+  position:relative;
+  transition:background 0.3s var(--ease);
+}
+.pain-card:hover{background:var(--surface);}
+.pain-icon{
+  width:36px;height:36px;
+  display:grid;place-items:center;
+  border:1px solid var(--rule);
+  color:var(--accent);
+  margin-bottom:0.2rem;
+}
+.pain-icon svg{width:20px;height:20px;}
+.pain-card h4{
+  font-family:var(--serif);font-size:0.94rem;font-weight:700;
+  color:var(--ink);letter-spacing:0.04em;line-height:1.4;
+}
+.pain-card p{
+  font-size:0.7rem;color:var(--ink-4);line-height:1.75;
+  letter-spacing:0.02em;
+}
+.pain-card .pain-num{
+  position:absolute;top:1rem;right:1rem;
+  font-family:'Noto Sans Mono','Menlo',monospace;
+  font-size:0.6rem;color:var(--ink-5);letter-spacing:0.1em;
+}
+
+/* ═══ Features ═══ */
+.feats{margin-top:2rem;position:relative;padding-left:1.5rem;}
+.feats::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:1px;background:linear-gradient(to bottom,var(--accent),var(--green));
+  opacity:0.12;
+}
+.feat-item{
+  padding:1.7rem 0;border-top:1px solid var(--rule);
+  display:grid;grid-template-columns:1fr 120px;gap:2rem;align-items:start;
+}
+.feat-item:first-child{border-top:none;padding-top:0.6rem;}
+.feat-item > div:first-of-type{min-width:0;}
+.feat-side{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.55rem;}
+.feat-n{font-family:var(--serif);font-size:0.7rem;font-weight:600;color:var(--ink-5);line-height:1;letter-spacing:0.02em;}
+.feat-tag{font-size:0.6rem;font-weight:500;color:var(--accent);letter-spacing:0.1em;}
+.feat-item h3{
+  font-family:var(--serif);font-size:1.1rem;font-weight:700;
+  color:var(--ink);line-height:1.55;letter-spacing:0.04em;margin-bottom:0.55rem;
+}
+.feat-item p{font-size:0.86rem;color:var(--ink-3);line-height:1.95;letter-spacing:0.03em;}
+.feat-decor{
+  width:120px;height:120px;
+  display:grid;place-items:center;
+  border:1px solid var(--rule);background:var(--surface);
+  position:relative;overflow:hidden;
+}
+.feat-decor svg{width:100%;height:100%;}
+.feat-decor::after{
+  content:attr(data-label);
+  position:absolute;bottom:0.5rem;left:0.6rem;
+  font-family:'Noto Sans Mono','Menlo',monospace;
+  font-size:0.6rem;color:var(--ink-5);letter-spacing:0.14em;
+}
+@media(max-width:780px){
+  .feat-item{grid-template-columns:1fr;gap:1.2rem;}
+  .feat-decor{width:100px;height:100px;}
+}
+
+/* ═══ Chain Diagram ═══ */
+.chain{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:2.4rem;padding:1.4rem 0 0;
+  position:relative;
+}
+.chain-node{
+  display:flex;align-items:center;gap:0.5rem;
+  position:relative;z-index:1;
+}
+.chain-num{
+  font-family:var(--serif);font-size:0.7rem;font-weight:700;
+  color:var(--ink-5);letter-spacing:0.02em;
+}
+.chain-label{
+  font-family:var(--serif);font-size:0.94rem;color:var(--ink);
+  font-weight:600;letter-spacing:0.06em;
+}
+.chain-sep{
+  font-size:0.7rem;color:var(--ink-5);
+  margin:0 0.2rem;
+}
+@media(max-width:580px){
+  .chain{flex-wrap:wrap;gap:1.2rem;justify-content:center;}
+}
+
+/* ═══ Agent Capabilities ═══ */
+.sec-cap{
+  position:relative;overflow:hidden;
+  background:var(--surface);
+}
+.sec-cap::before{
+  content:'Agent';
+  position:absolute;right:-1rem;top:50%;
+  transform:translateY(-50%);
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(6rem,18vw,12rem);
+  color:var(--ink);opacity:0.025;
+  line-height:1;letter-spacing:-0.04em;
+  pointer-events:none;user-select:none;
+}
+.cap-cards{
+  display:grid;grid-template-columns:1fr;gap:0;margin-top:2rem;
+  position:relative;z-index:1;padding-left:1.5rem;
+}
+.cap-cards::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:1px;background:var(--ink);opacity:0.06;
+}
+.cap-card{
+  padding:1.7rem 0;border-top:1px solid var(--rule);
+  position:relative;
+}
+.cap-card:first-child{border-top:none;padding-top:0.6rem;}
+.cap-card h3{
+  font-family:var(--serif);font-size:1.1rem;font-weight:700;
+  color:var(--ink);margin-bottom:0.55rem;line-height:1.5;letter-spacing:0.04em;
+}
+.cap-card p{font-size:0.86rem;color:var(--ink-3);line-height:1.95;letter-spacing:0.03em;}
+.cap-example{
+  margin-top:0.9rem;padding:1rem 1.3rem;
+  border-left:2px solid var(--accent);
+  background:var(--accent-bg);
+  font-family:var(--serif);
+  font-size:0.78rem;color:var(--ink-4);line-height:1.85;
+  font-style:normal;letter-spacing:0.03em;
+}
+
+/* ═══ Memory ═══ */
+.mem-intro{font-size:0.94rem;color:var(--ink-3);line-height:2;letter-spacing:0.03em;margin-bottom:1.8rem;}
+.mem-visual{
+  margin-bottom:2rem;
+  position:relative;
+}
+.mem-visual-label{
+  display:inline-block;
+  font-family:'Noto Sans Mono','Menlo',monospace;
+  font-size:0.6rem;color:var(--ink-5);
+  letter-spacing:0.22em;font-weight:600;
+  margin-bottom:0.8rem;
+}
+.mem-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--rule);
+  border:1px solid var(--rule);
+}
+.mem-cell{
+  background:var(--bg);padding:1.5rem 1.3rem 1.4rem;
+  display:flex;flex-direction:column;gap:0.4rem;
+  position:relative;
+  border-top:2px solid var(--accent);
+  transition:background 0.3s var(--ease);
+}
+.mem-cell:nth-child(2){border-top-color:#8a5a3a;}
+.mem-cell:nth-child(3){border-top-color:var(--green);}
+.mem-cell:nth-child(4){border-top-color:var(--ink-4);}
+.mem-cell:hover{background:var(--surface);}
+.mem-cell-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:0.2rem;
+}
+.mem-cell-num{
+  font-family:'Noto Sans Mono','Menlo',monospace;
+  font-size:0.6rem;color:var(--ink-5);
+  letter-spacing:0.18em;line-height:1.4;
+}
+.mem-cell-icon{
+  width:32px;height:32px;display:grid;place-items:center;
+  color:var(--accent);flex-shrink:0;
+}
+.mem-cell:nth-child(2) .mem-cell-icon{color:#8a5a3a;}
+.mem-cell:nth-child(3) .mem-cell-icon{color:var(--green);}
+.mem-cell:nth-child(4) .mem-cell-icon{color:var(--ink-4);}
+.mem-cell-icon svg{width:26px;height:26px;}
+.mem-cell-title{
+  font-family:var(--serif);font-size:1.1rem;font-weight:700;
+  color:var(--ink);letter-spacing:0.06em;line-height:1.3;
+}
+.mem-cell-en{
+  font-family:'Noto Sans Mono','Menlo',monospace;
+  font-size:0.6rem;color:var(--ink-5);
+  letter-spacing:0.22em;font-weight:500;
+}
+.mem-cell-list{
+  list-style:none;margin-top:0.3rem;padding-top:0.6rem;
+  border-top:1px dashed var(--rule);
+}
+.mem-cell-list li{
+  font-size:0.7rem;color:var(--ink-3);line-height:1.7;
+  letter-spacing:0.03em;
+  display:flex;align-items:baseline;gap:0.5rem;
+  padding:0.05rem 0;
+}
+.mem-cell-list li::before{
+  content:'';width:3px;height:3px;border-radius:50%;
+  background:var(--ink-5);flex-shrink:0;transform:translateY(-2px);
+}
+@media(max-width:780px){.mem-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:460px){.mem-grid{grid-template-columns:1fr;}}
+.mem-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+@media(max-width:640px){.mem-cards{grid-template-columns:1fr;}}
+.mem-card{
+  padding:1.5rem 1.4rem;background:var(--surface);
+  border-top:2px solid var(--accent);
+}
+.mem-card:nth-child(2){border-top-color:var(--green);}
+.mem-card:nth-child(3){border-top-color:var(--ink-4);}
+.mem-card h3{
+  font-family:var(--serif);font-size:0.94rem;font-weight:700;
+  color:var(--ink);margin-bottom:0.55rem;line-height:1.45;letter-spacing:0.04em;
+}
+.mem-card p{font-size:0.86rem;color:var(--ink-3);line-height:1.95;letter-spacing:0.03em;}
+
+/* ═══ Audience ═══ */
+.audience-split{margin-top:1.8rem;}
+.audience-yes{margin-bottom:1.6rem;}
+.audience-badge{
+  font-size:0.7rem;font-weight:600;letter-spacing:0.1em;
+  color:var(--green);text-transform:uppercase;
+  margin-bottom:0.8rem;
+}
+.audience-yes ul{list-style:none;padding:0;}
+.audience-yes li{
+  font-size:0.86rem;color:var(--ink-3);
+  line-height:1.95;letter-spacing:0.03em;
+  padding:0.2rem 0 0.2rem 1.4rem;
+  position:relative;
+}
+.audience-yes li::before{
+  content:'';position:absolute;left:0;top:0.85em;
+  width:5px;height:5px;border-radius:50%;background:var(--green);
+}
+.audience-no{
+  font-size:0.78rem;color:var(--ink-5);line-height:1.9;
+  letter-spacing:0.03em;
+  padding-top:1.1rem;border-top:1px solid var(--rule);
+}
+
+/* ═══ Apply Form ═══ */
+.apply-sec{padding:5rem 0;background:var(--bg);}
+.apply-layout{
+  display:grid;grid-template-columns:1fr;
+  gap:2rem;align-items:start;
+  max-width:640px;margin:0 auto;
+}
+.apply-intro{text-align:center;}
+.apply-intro h2{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(1.4rem,3vw,1.8rem);
+  color:var(--ink);line-height:1.5;letter-spacing:0.05em;margin-bottom:0.7rem;
+}
+.apply-intro p{font-size:0.86rem;color:var(--ink-4);line-height:1.9;letter-spacing:0.03em;margin-bottom:0;}
+.apply-form{
+  display:grid;gap:0;
+  border:1px solid var(--rule);background:#fff;
+  padding:2rem 2.4rem;
+}
+.form-group{
+  padding:0.9rem 0;
+}
+.form-group:first-child{padding-top:0;}
+.form-group:last-of-type{padding-bottom:0;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+@media(max-width:580px){.field-row{grid-template-columns:1fr;}}
+.field label{
+  display:flex;align-items:baseline;gap:0.3rem;
+  font-size:0.7rem;font-weight:500;
+  color:var(--ink-3);margin-bottom:0.5rem;letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+.field label .req{
+  color:var(--danger);font-weight:700;font-size:0.78rem;
+  letter-spacing:0;line-height:0.5;
+}
+.field-error{
+  display:none;align-items:center;gap:0.4rem;
+  font-size:0.7rem;color:var(--danger);
+  margin-top:0.45rem;letter-spacing:0.03em;line-height:1.5;
+}
+.field-error::before{
+  content:'!';width:12px;height:12px;
+  border:1px solid var(--danger);border-radius:50%;
+  display:grid;place-items:center;
+  font-size:0.6rem;font-weight:700;
+  flex-shrink:0;line-height:1;
+}
+.field.has-error .field-error{display:flex;}
+.field.has-error input,
+.field.has-error select{
+  border-bottom-color:var(--danger);
+}
+.field.has-error label{color:var(--danger);}
+.field.has-error label .req{color:var(--danger);}
+.chips-error{
+  display:none;align-items:center;gap:0.4rem;
+  font-size:0.7rem;color:var(--danger);
+  margin-top:0.6rem;letter-spacing:0.03em;
+}
+.chips-error::before{
+  content:'!';width:12px;height:12px;
+  border:1px solid var(--danger);border-radius:50%;
+  display:grid;place-items:center;
+  font-size:0.6rem;font-weight:700;
+  flex-shrink:0;line-height:1;
+}
+fieldset.has-error .chips-error{display:flex;}
+fieldset.has-error legend{color:var(--danger);}
+
+.form-banner{
+  display:none;align-items:flex-start;gap:0.7rem;
+  padding:0.9rem 1rem;margin-bottom:1.4rem;
+  background:var(--danger-bg);
+  border-left:2px solid var(--danger);
+  font-size:0.78rem;color:var(--ink-2);
+  letter-spacing:0.03em;line-height:1.75;
+}
+.form-banner.is-visible{display:flex;}
+.form-banner svg{
+  width:14px;height:14px;flex-shrink:0;
+  color:var(--danger);margin-top:3px;
+}
+.form-banner b{color:var(--ink);font-weight:600;}
+
+.submit-btn:disabled{
+  opacity:0.6;cursor:not-allowed;
+}
+.submit-btn:disabled:hover{background:var(--ink);}
+
+.modal-card.is-duplicate .modal-badge{
+  color:var(--danger);
+}
+
+/* ═══ Apply Status (already submitted view) ═══ */
+.apply-status{
+  display:none;
+  border:1px solid var(--rule);background:#fff;
+  padding:2.6rem 2rem 2rem;text-align:center;
+  position:relative;
+}
+.apply-status.is-visible{
+  display:block;
+  animation:up 0.6s var(--ease) both;
+}
+.apply-status-badge{
+  display:inline-flex;align-items:center;gap:0.45rem;
+  font-size:0.6rem;font-weight:600;color:var(--green);
+  letter-spacing:0.16em;
+  padding:0.4rem 0.9rem;
+  border:1px solid rgba(45,106,79,0.28);
+  background:rgba(45,106,79,0.06);
+  border-radius:2px;
+  margin-bottom:1.2rem;
+}
+.apply-status-badge svg{width:13px;height:13px;}
+.apply-status h3{
+  font-family:var(--serif);font-weight:700;
+  font-size:1.1rem;color:var(--ink);
+  letter-spacing:0.04em;line-height:1.5;
+  margin-bottom:1.4rem;
+}
+.apply-status-meta{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--rule);
+  border:1px solid var(--rule);
+  margin:0 auto 1.4rem;max-width:400px;
+}
+.apply-status-meta .meta-item{
+  background:#fff;padding:0.85rem 0.5rem;
+}
+.meta-label{
+  display:block;
+  font-family:'Noto Sans Mono','Menlo',monospace;
+  font-size:0.6rem;font-weight:500;
+  color:var(--ink-5);letter-spacing:0.18em;
+  margin-bottom:0.3rem;
+}
+.meta-value{
+  display:block;
+  font-family:var(--serif);font-size:0.86rem;
+  color:var(--ink);font-weight:600;letter-spacing:0.02em;
+  line-height:1.3;
+}
+.meta-value.is-pending{color:var(--accent);}
+@media(max-width:480px){
+  .apply-status-meta{grid-template-columns:1fr;}
+}
+.apply-status-desc{
+  font-size:0.78rem;color:var(--ink-4);
+  line-height:1.9;letter-spacing:0.03em;
+  max-width:400px;margin:0 auto 1.6rem;
+}
+.apply-status-actions{
+  display:flex;justify-content:center;gap:1.6rem;
+  padding-top:1rem;border-top:1px solid var(--rule);
+}
+.apply-status-actions button{
+  font-family:var(--sans);font-size:0.7rem;
+  color:var(--ink-4);background:none;border:none;
+  cursor:pointer;letter-spacing:0.04em;
+  border-bottom:1px solid var(--rule);
+  padding:0 0 0.2rem;
+  transition:all 0.25s;
+}
+.apply-status-actions button:hover{
+  color:var(--ink);border-bottom-color:var(--ink);
+}
+.apply-form.is-hidden,
+.apply-intro.is-hidden{display:none;}
+.field input,.field select,.field textarea{
+  width:100%;padding:0.7rem 0;
+  border:none;border-bottom:1px solid var(--rule);border-radius:0;
+  background:transparent;color:var(--ink);
+  font-size:0.86rem;outline:none;
+  transition:border-color 0.25s;
+  letter-spacing:0.02em;
+}
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus{
+  -webkit-box-shadow:0 0 0 50px #fff inset;
+  -webkit-text-fill-color:var(--ink);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-5);}
+.field select{
+  appearance:none;-webkit-appearance:none;
+  background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238a8279' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0 center;
+  padding-right:1.5rem;
+  color:var(--ink-5);
+}
+.field select.has-value{color:var(--ink);}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-bottom-color:var(--ink);
+}
+.field textarea{min-height:80px;resize:vertical;line-height:1.9;border-bottom:1px solid var(--rule);}
+.code-row{display:grid;grid-template-columns:1fr auto;gap:0.8rem;align-items:end;}
+.code-btn{
+  font-size:0.7rem;font-weight:500;
+  padding:0.7rem 1rem;border:none;border-bottom:1px solid var(--rule);
+  border-radius:0;background:transparent;
+  color:var(--ink-3);cursor:pointer;
+  transition:all 0.25s;white-space:nowrap;
+  letter-spacing:0.04em;
+}
+.code-btn:hover{border-bottom-color:var(--ink);color:var(--ink);}
+fieldset{border:none;padding:0;}
+legend{
+  font-size:0.7rem;font-weight:500;
+  color:var(--ink-3);margin-bottom:0.6rem;letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+.chips{display:flex;flex-wrap:wrap;gap:0.45rem;}
+.chips label{
+  display:inline-flex;align-items:center;
+  padding:0.45rem 0.85rem;border:1px solid var(--rule);
+  border-radius:20px;font-size:0.7rem;color:var(--ink-4);
+  cursor:pointer;transition:all 0.2s;
+  background:transparent;letter-spacing:0.02em;
+}
+.chips label:hover{border-color:var(--ink-4);color:var(--ink-3);}
+.chips input{display:none;}
+.chips label:has(input:checked){
+  border-color:var(--ink-3);color:var(--ink);
+  background:var(--surface);
+}
+.submit-btn{
+  width:100%;padding:1rem;margin-top:1.4rem;
+  font-size:0.78rem;font-weight:600;
+  color:#fff;background:var(--ink);
+  border:none;border-radius:0;cursor:pointer;
+  transition:all 0.25s;letter-spacing:0.1em;
+  text-transform:uppercase;
+}
+.submit-btn:hover{background:var(--accent);}
+.form-hint{font-size:0.7rem;color:var(--ink-5);margin-top:0.7rem;text-align:center;letter-spacing:0.04em;}
+
+/* ═══ CTA Final ═══ */
+.final{
+  padding:6rem 0 7rem;text-align:center;
+  background:var(--ink);position:relative;overflow:hidden;
+}
+.final::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 50% 40%,rgba(29,37,82,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 90%,rgba(255,255,255,0.02) 0%,transparent 40%);
+  pointer-events:none;
+}
+.final::after{
+  content:'故事';
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(10rem,22vw,18rem);
+  color:#fff;opacity:0.025;
+  line-height:1;letter-spacing:0.04em;
+  pointer-events:none;user-select:none;z-index:0;
+  white-space:nowrap;
+}
+.final > *{position:relative;z-index:1;}
+.final h2{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(1.5rem,3.2vw,2rem);
+  color:var(--bg);margin-bottom:1rem;line-height:1.5;letter-spacing:0.06em;
+}
+.final p{
+  font-family:var(--serif);font-size:0.86rem;color:var(--ink-5);
+  margin-bottom:2.4rem;line-height:1.85;letter-spacing:0.12em;
+}
+.final .btn-main{
+  font-size:0.86rem;padding:1rem 3.5rem;
+  background:var(--accent);border-color:var(--accent);
+  letter-spacing:0.06em;
+}
+
+/* ═══ Footer ═══ */
+footer{
+  padding:2rem 0;text-align:center;
+  font-family:var(--serif);font-size:0.6rem;color:var(--ink-5);
+  background:var(--ink);border-top:1px solid rgba(255,255,255,0.04);
+  letter-spacing:0.18em;
+}
+
+/* ═══ Modal ═══ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  display:none;place-items:center;
+  background:rgba(26,22,18,0.4);
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.visible{display:grid;}
+.modal-card{
+  width:min(480px,90vw);padding:2.5rem;
+  background:var(--bg);border:1px solid var(--rule);
+  position:relative;text-align:center;
+}
+.modal-card h2{
+  font-family:var(--serif);font-size:1.3rem;font-weight:700;
+  color:var(--ink);margin-bottom:1rem;
+}
+.modal-card p{font-size:0.86rem;color:var(--ink-3);line-height:2;margin-bottom:2rem;}
+.modal-close{
+  position:absolute;top:1rem;right:1rem;
+  width:2rem;height:2rem;border:1px solid var(--rule);
+  background:transparent;color:var(--ink-4);
+  cursor:pointer;font-size:1.1rem;display:grid;place-items:center;
+}
+.modal-badge{
+  display:inline-block;font-size:0.7rem;font-weight:600;
+  color:var(--green);letter-spacing:0.1em;margin-bottom:0.8rem;
+}
+
+/* ═══ FAQ ═══ */
+.faq-list{margin-top:1.8rem;}
+.faq-item{border-bottom:1px solid var(--rule);}
+.faq-item:first-child{border-top:1px solid var(--rule);}
+.faq-q{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 0;cursor:pointer;
+  font-family:var(--serif);font-size:0.86rem;font-weight:600;
+  color:var(--ink);letter-spacing:0.03em;line-height:1.5;
+}
+.faq-q::after{
+  content:'+';font-size:1rem;font-weight:300;color:var(--ink-4);
+  transition:transform 0.3s var(--ease);flex-shrink:0;margin-left:1rem;
+}
+.faq-item.open .faq-q::after{content:'−';}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.4s var(--ease),padding 0.4s var(--ease);
+  font-size:0.86rem;color:var(--ink-4);line-height:1.85;letter-spacing:0.03em;
+  padding:0 0 0 0;
+}
+.faq-item.open .faq-a{
+  max-height:240px;padding-bottom:1.1rem;
+}
+
+/* ═══ Inline CTA ═══ */
+.inline-cta{
+  text-align:center;padding:1.6rem 2rem;
+}
+.inline-cta a{
+  font-family:var(--serif);font-size:0.94rem;
+  color:var(--ink-3);letter-spacing:0.04em;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:0.2rem;
+  transition:all 0.25s;
+}
+.inline-cta a:hover{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ═══ Reveal ═══ */
+.reveal{
+  opacity:0;transform:translateY(20px);
+  transition:opacity 0.8s var(--ease),transform 0.8s var(--ease);
+}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal:nth-child(2){transition-delay:0.08s;}
+.reveal:nth-child(3){transition-delay:0.16s;}
+.reveal:nth-child(4){transition-delay:0.24s;}
+
+
+
+/* ═══ Responsive ═══ */
+/* Tablet portrait & small laptop */
+@media(max-width:900px){
+  nav{padding:0.95rem 2rem;}
+  nav.scrolled{padding:0.7rem 2rem;}
+  .wrap{padding:0 2rem;}
+  .hero{padding:5.5rem 2rem 3rem;}
+  .sec{padding:4.5rem 0;}
+  .apply-sec{padding:4.5rem 0;}
+  .pullquote{margin:2rem 0;padding:1.2rem 0;}
+  .pullquote::before{font-size:2rem;left:0;top:0.5rem;}
+  .feat-item{padding:1.4rem 0;}
+  .cap-card{padding:1.4rem 0;}
+  .feats{padding-left:1.2rem;}
+  .cap-cards{padding-left:1.2rem;}
+}
+
+/* Phone */
+@media(max-width:640px){
+  nav{padding:0.8rem 1.4rem;}
+  nav.scrolled{padding:0.65rem 1.4rem;}
+  .nav-logo img{height:30px;}
+  nav.scrolled .nav-logo img{height:26px;}
+  .nav-logo span{
+    font-size:0.55rem;
+    padding-left:0.5rem;
+  }
+  .nav-cta{
+    font-size:0.65rem;
+    padding:0.45rem 1rem;letter-spacing:0.04em;
+  }
+
+  .hero{padding:5rem 1.4rem 2.6rem;gap:1.8rem;}
+  .hero h1{font-size:clamp(1.7rem,7vw,2.2rem);line-height:1.4;margin-bottom:1.2rem;}
+  .hero-eyebrow{margin-bottom:1.4rem;letter-spacing:0.22em;}
+  .hero-text{font-size:0.9rem;line-height:1.95;margin-bottom:1.5rem;}
+  .hero-actions{gap:1rem;}
+  .hero-stack{
+    margin:1.2rem -1.4rem 0;
+    padding:0.4rem 1.4rem 0.6rem;
+    gap:0.8rem;
+  }
+
+  .wrap{padding:0 1.4rem;}
+  .sec{padding:3.5rem 0;}
+  .sec-title{font-size:clamp(1.35rem,5vw,1.75rem);line-height:1.5;margin-bottom:1.1rem;letter-spacing:0.04em;}
+  .sec-body{font-size:0.9rem;line-height:1.95;}
+  .eyebrow{margin-bottom:0.9rem;letter-spacing:0.2em;}
+
+  .pullquote{font-size:1rem;margin:1.8rem 0;padding:1.1rem 0;line-height:1.8;letter-spacing:0.04em;}
+
+  .problem-body{font-size:0.9rem;line-height:1.95;}
+  .pain-grid{margin:1.8rem 0;}
+  .pain-card{padding:1.1rem 1rem;gap:0.45rem;}
+  .pain-card .pain-num{top:0.8rem;right:0.8rem;}
+
+  .feat-item{
+    grid-template-columns:1fr;gap:1rem;
+    padding:1.3rem 0;
+  }
+  .feat-decor{width:80px;height:80px;}
+  .feat-item h3{font-size:1rem;line-height:1.5;}
+  .feat-item p{font-size:0.82rem;line-height:1.85;}
+  .feats{padding-left:1rem;}
+
+  .cap-cards{padding-left:1rem;}
+  .cap-card{padding:1.3rem 0;}
+  .cap-card h3{font-size:1rem;line-height:1.5;}
+  .cap-card p{font-size:0.82rem;line-height:1.85;}
+  .cap-example{padding:0.85rem 1.1rem;font-size:0.74rem;line-height:1.8;}
+
+  .mem-intro{font-size:0.9rem;line-height:1.95;margin-bottom:1.4rem;}
+  .mem-cell{padding:1.2rem 1rem 1.1rem;}
+  .mem-cell-title{font-size:1rem;}
+  .mem-cards{grid-template-columns:1fr;}
+  .mem-card{padding:1.2rem 1.1rem;}
+
+  .audience-yes li{font-size:0.82rem;line-height:1.85;padding:0.18rem 0 0.18rem 1.2rem;}
+  .audience-no{font-size:0.74rem;line-height:1.8;}
+
+  .apply-sec{padding:3.5rem 0;}
+  .apply-layout{grid-template-columns:1fr;gap:1.4rem;}
+  .apply-intro h2{font-size:clamp(1.3rem,5vw,1.6rem);}
+  .apply-intro p{font-size:0.82rem;}
+  .apply-form{padding:1.6rem 1.3rem;}
+  .form-group{padding:0.75rem 0;}
+  .field-row{grid-template-columns:1fr;gap:1rem;}
+  .field input,
+  .field select,
+  .field textarea{font-size:16px;padding:0.65rem 0;}
+  .field label{font-size:0.66rem;letter-spacing:0.04em;}
+  fieldset legend{font-size:0.66rem;letter-spacing:0.04em;}
+  .code-row{gap:0.6rem;}
+  .code-btn{font-size:0.66rem;padding:0.65rem 0.8rem;}
+  .chips{gap:0.4rem;}
+  .chips label{font-size:0.68rem;padding:0.4rem 0.75rem;letter-spacing:0;}
+  .submit-btn{padding:0.95rem;font-size:0.74rem;letter-spacing:0.08em;}
+  .form-hint{font-size:0.66rem;letter-spacing:0.02em;}
+  .form-banner{padding:0.8rem 0.9rem;font-size:0.74rem;line-height:1.7;margin-bottom:1.2rem;}
+
+  .apply-status{padding:2.2rem 1.3rem 1.6rem;}
+  .apply-status h3{font-size:1rem;line-height:1.5;margin-bottom:1.2rem;}
+  .apply-status-meta{margin-bottom:1.2rem;}
+  .apply-status-actions{gap:1.2rem;padding-top:0.9rem;}
+
+  .modal-card{padding:1.8rem 1.4rem;}
+  .modal-card h2{font-size:1.1rem;line-height:1.5;margin-bottom:0.8rem;}
+  .modal-card p{font-size:0.82rem;line-height:1.9;margin-bottom:1.6rem;}
+
+  .faq-q{font-size:0.82rem;padding:0.9rem 0;line-height:1.5;}
+  .faq-a{font-size:0.82rem;line-height:1.8;}
+
+  .final{padding:4.5rem 0 5rem;}
+  .final h2{font-size:clamp(1.4rem,6vw,1.8rem);line-height:1.5;}
+  .final p{font-size:0.78rem;letter-spacing:0.08em;margin-bottom:2rem;}
+  .final .btn-main{font-size:0.78rem;padding:0.85rem 2.4rem;}
+
+  footer{padding:1.6rem 0;letter-spacing:0.2em;}
+  footer .wrap{letter-spacing:0.18em!important;}
+}
+
+/* Small phone */
+@media(max-width:480px){
+  .pain-grid{grid-template-columns:1fr;}
+  .pain-card{padding:1.2rem 1.1rem;}
+  .pain-card .pain-num{top:1rem;right:1rem;}
+  .stack-card{padding:1.2rem 1.1rem;}
+  .stack-card h4{font-size:1rem;}
+  .stack-card li{font-size:0.74rem;}
+  .feat-decor{width:72px;height:72px;}
+  .apply-form{padding:1.4rem 1.1rem;}
+  .apply-status{padding:2rem 1.1rem 1.4rem;}
+  .pullquote{font-size:0.94rem;letter-spacing:0.03em;}
+}
+
+/* Tiny phone */
+@media(max-width:380px){
+  nav{padding:0.7rem 1.1rem;}
+  nav.scrolled{padding:0.6rem 1.1rem;}
+  .nav-logo span{display:none;}
+  .nav-cta{padding:0.4rem 0.85rem;font-size:0.62rem;}
+  .wrap{padding:0 1.1rem;}
+  .hero{padding:4.6rem 1.1rem 2.4rem;}
+  .apply-form{padding:1.3rem 1rem;}
+  .chips label{padding:0.4rem 0.65rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#" aria-label="剧现">
+    <img src="logo.png" alt="剧现">
+    <span>内测版</span>
+  </a>
+  <a class="nav-cta" href="#apply">申请内测资格</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="hero-eyebrow">AI Story Development Workspace</div>
+    <h1>真正记得住、改得准、<br>能陪你写完<span class="big">整部</span>作品的<br>AI 故事开发工作台</h1>
+    <p class="hero-text">
+      从一个模糊灵感，到可评估、可扩写、可迭代的剧本底稿。剧现把灵感探讨、结构评估、剧本生成和长程记忆串成一条创作链，让一个人也能干出一支团队的活。
+    </p>
+    <div class="hero-actions">
+      <button class="btn-main" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})">申请内测资格</button>
+      <button class="btn-ghost" onclick="document.getElementById('problem').scrollIntoView({behavior:'smooth'})">了解产品能力 ↓</button>
+    </div>
+    <p class="hero-hint">内测名额限量开放。申请通过后，我们将通过短信发送专属邀请码。</p>
+  </div>
+  <div class="hero-stack">
+    <div class="stack-card card-1">
+      <div class="sc-tag">CHARACTER · 人物</div>
+      <h4>沈砚清</h4>
+      <ul>
+        <li>身份 · <b>永泰朝幕僚之子</b></li>
+        <li>性格 · 寡言，重诺</li>
+        <li>动机 · 找回失踪三年的妹妹</li>
+        <li>弧光 · 由克制 → 决绝</li>
+      </ul>
+    </div>
+    <div class="stack-card card-2">
+      <div class="sc-tag">WORLD · 世界观</div>
+      <h4>永泰七年 · 京城</h4>
+      <ul>
+        <li>设定 · 私军不得入京三十里</li>
+        <li>规则 · 玉佩为旧约之凭</li>
+        <li>信息差 · 主角不知妹妹仍在世</li>
+      </ul>
+    </div>
+    <div class="stack-card card-3">
+      <div class="sc-tag">FORESHADOW · 伏笔</div>
+      <h4>玉佩</h4>
+      <ul>
+        <li>第 03 集 · <b>已埋</b></li>
+        <li>第 12 集 · 待触发</li>
+        <li>第 28 集 · 计划回收</li>
+      </ul>
+    </div>
+    <div class="stack-card card-4">
+      <div class="sc-tag">VERSION · v2</div>
+      <h4>评估 · A+ 83</h4>
+      <ul>
+        <li>人物塑造 · <b>8.5</b></li>
+        <li>故事结构 · <b>7.5</b></li>
+        <li>节奏控制 · <b>6.0</b></li>
+        <li>结论 · <b>推荐开发</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="problem">
+  <div class="wrap">
+    <div class="eyebrow reveal">真正的创作痛点</div>
+    <h2 class="sec-title reveal">AI 已经会写一段，但创作者需要的是写完<span class="big">一部</span>。</h2>
+    <p class="problem-body reveal">
+      通用 AI 可以快速生成片段、大纲和台词，但真正的故事创作很少停在"一问一答"。
+    </p>
+    <p class="problem-body reveal">
+      一部长篇短剧、互动叙事或系列 IP，往往要同时处理人物成长、世界观规则、伏笔回收、节奏推进、版本修改和市场判断。
+    </p>
+    <p class="problem-body reveal">
+      写到中段时，最容易出现以下四种典型问题：
+    </p>
+
+    <div class="pain-grid reveal">
+      <div class="pain-card">
+        <span class="pain-num">01</span>
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="8" r="3"/>
+            <path d="M3 20c0-3 2.5-5 6-5"/>
+            <path d="M14 13l3 3 5-5" stroke-dasharray="2 2"/>
+            <path d="M17 8l3-3" stroke-dasharray="2 2"/>
+          </svg>
+        </div>
+        <h4>人设漂移</h4>
+        <p>主角的性格、动机、说话方式在第 30 集之后悄悄变形，越走越偏。</p>
+      </div>
+      <div class="pain-card">
+        <span class="pain-num">02</span>
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="12" r="5"/>
+            <circle cx="16" cy="12" r="5"/>
+            <path d="M12 8v8" stroke-dasharray="2 2"/>
+          </svg>
+        </div>
+        <h4>设定冲突</h4>
+        <p>世界观规则、人物关系前后矛盾，需要回头大改才能让故事自洽。</p>
+      </div>
+      <div class="pain-card">
+        <span class="pain-num">03</span>
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h6l2 3 2-3h6"/>
+            <path d="M4 12h7"/>
+            <path d="M14 12h6" stroke-dasharray="2 2"/>
+            <path d="M4 18h5" stroke-dasharray="2 2"/>
+            <circle cx="20" cy="18" r="2"/>
+          </svg>
+        </div>
+        <h4>伏笔遗忘</h4>
+        <p>前期埋下的钩子写到后面就被忘掉，本该呼应的细节石沉大海。</p>
+      </div>
+      <div class="pain-card">
+        <span class="pain-num">04</span>
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="2"/>
+            <circle cx="4" cy="6" r="1.5"/>
+            <circle cx="20" cy="6" r="1.5"/>
+            <circle cx="4" cy="18" r="1.5"/>
+            <circle cx="20" cy="18" r="1.5"/>
+            <path d="M12 12L4 6M12 12l8-6M12 12L4 18M12 12l8 6"/>
+          </svg>
+        </div>
+        <h4>牵一发动全身</h4>
+        <p>修改第 5 集一段台词，需要逐集排查二十处相关情节，成本极高。</p>
+      </div>
+    </div>
+
+    <p class="pullquote reveal">
+      创作者不缺一个会接话的模型，缺的是一个能理解故事、记住设定、稳定评估，并持续推进复杂任务的工作台。
+    </p>
+  </div>
+</section>
+
+<section class="sec" id="product">
+  <div class="wrap">
+    <div class="eyebrow reveal">一个工作台，三种创作方式</div>
+    <h2 class="sec-title reveal">从灵感、评估到生成，剧现把复杂创作串成一条链。</h2>
+    <p class="sec-body reveal">不需要先积累三个月。第一个灵感就能开始推进。</p>
+
+    <div class="feats">
+      <div class="feat-item reveal">
+        <div>
+          <div class="feat-side">
+            <div class="feat-n">01</div>
+            <div class="feat-tag">灵感探讨</div>
+          </div>
+          <h3>只有一个想法，也可以<span class="big">开始</span>。</h3>
+          <p>剧现会通过结构化追问，把模糊灵感落成可继续开发的故事底稿：世界观、角色、冲突、结构、钩子、情绪、风格与市场定位逐步清晰。</p>
+        </div>
+        <div class="feat-decor" data-label="SPARK / 01">
+          <svg viewBox="0 0 140 140" fill="none" stroke="#1d2552" stroke-width="1" stroke-linecap="round">
+            <circle cx="70" cy="70" r="6" fill="#1d2552" stroke="none"/>
+            <circle cx="70" cy="70" r="22" stroke-dasharray="2 3" opacity="0.4"/>
+            <circle cx="70" cy="70" r="42" stroke-dasharray="2 4" opacity="0.25"/>
+            <circle cx="70" cy="70" r="62" stroke-dasharray="1 5" opacity="0.15"/>
+            <line x1="70" y1="70" x2="30" y2="30"/>
+            <line x1="70" y1="70" x2="110" y2="35"/>
+            <line x1="70" y1="70" x2="115" y2="100"/>
+            <line x1="70" y1="70" x2="35" y2="110"/>
+            <line x1="70" y1="70" x2="22" y2="70"/>
+            <line x1="70" y1="70" x2="118" y2="70"/>
+            <circle cx="30" cy="30" r="3" fill="#1a1612" stroke="none"/>
+            <circle cx="110" cy="35" r="3" fill="#1a1612" stroke="none"/>
+            <circle cx="115" cy="100" r="3" fill="#2d6a4f" stroke="none"/>
+            <circle cx="35" cy="110" r="3" fill="#1a1612" stroke="none"/>
+            <circle cx="22" cy="70" r="3" fill="#2d6a4f" stroke="none"/>
+            <circle cx="118" cy="70" r="3" fill="#1a1612" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+      <div class="feat-item reveal">
+        <div>
+          <div class="feat-side">
+            <div class="feat-n">02</div>
+            <div class="feat-tag">分析评估</div>
+          </div>
+          <h3>已经有剧本，就先看它好在哪里、卡在哪里。</h3>
+          <p>剧现以 9 个维度评估故事结构、人物塑造、创意主题、节奏控制、开场代入、情绪设计、台词质量、市场适配和视听可拍性，并给出亮点、问题与可修改方向。</p>
+        </div>
+        <div class="feat-decor" data-label="EVAL / 9DIM">
+          <svg viewBox="0 0 140 140" fill="none" stroke="#1d2552" stroke-width="1" stroke-linejoin="round">
+            <polygon points="70,15 117.6,40 117.6,100 70,125 22.4,100 22.4,40" stroke="#e4e0d9" stroke-width="1"/>
+            <polygon points="70,30 105,47 105,93 70,110 35,93 35,47" stroke="#e4e0d9" stroke-width="1"/>
+            <polygon points="70,45 92,55 92,85 70,95 48,85 48,55" stroke="#e4e0d9" stroke-width="1"/>
+            <line x1="70" y1="70" x2="70" y2="15" stroke="#e4e0d9"/>
+            <line x1="70" y1="70" x2="117.6" y2="40" stroke="#e4e0d9"/>
+            <line x1="70" y1="70" x2="117.6" y2="100" stroke="#e4e0d9"/>
+            <line x1="70" y1="70" x2="70" y2="125" stroke="#e4e0d9"/>
+            <line x1="70" y1="70" x2="22.4" y2="100" stroke="#e4e0d9"/>
+            <line x1="70" y1="70" x2="22.4" y2="40" stroke="#e4e0d9"/>
+            <polygon points="70,28 110,48 105,90 70,108 32,92 30,46" fill="rgba(29,37,82,0.12)" stroke="#1d2552" stroke-width="1.2"/>
+            <circle cx="70" cy="28" r="2.5" fill="#1d2552"/>
+            <circle cx="110" cy="48" r="2.5" fill="#1d2552"/>
+            <circle cx="105" cy="90" r="2.5" fill="#1d2552"/>
+            <circle cx="70" cy="108" r="2.5" fill="#1d2552"/>
+            <circle cx="32" cy="92" r="2.5" fill="#1d2552"/>
+            <circle cx="30" cy="46" r="2.5" fill="#1d2552"/>
+          </svg>
+        </div>
+      </div>
+      <div class="feat-item reveal">
+        <div>
+          <div class="feat-side">
+            <div class="feat-n">03</div>
+            <div class="feat-tag">剧本生成</div>
+          </div>
+          <h3>有了底稿，就把故事继续往前推。</h3>
+          <p>剧现支持展开、续写、改编和多版本生成，并能在生成后继续评估、修改、再生成，帮助作品向更稳定、更完整的方向收敛。</p>
+        </div>
+        <div class="feat-decor" data-label="GEN / V1-V3">
+          <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g stroke-linecap="round">
+              <rect x="34" y="40" width="60" height="76" fill="#faf8f4" stroke="#b5afa6" stroke-width="1"/>
+              <text x="40" y="54" font-size="7" fill="#b5afa6" font-family="'Noto Sans Mono',monospace" letter-spacing="0.5">v1</text>
+              <rect x="44" y="32" width="60" height="76" fill="#f4f1eb" stroke="#8a8279" stroke-width="1"/>
+              <text x="50" y="46" font-size="7" fill="#8a8279" font-family="'Noto Sans Mono',monospace" letter-spacing="0.5">v2</text>
+              <rect x="54" y="24" width="60" height="76" fill="#fff" stroke="#1a1612" stroke-width="1.3"/>
+              <text x="60" y="38" font-size="7" fill="#1a1612" font-family="'Noto Sans Mono',monospace" font-weight="600" letter-spacing="0.5">v3</text>
+              <line x1="62" y1="52" x2="106" y2="52" stroke="#1a1612" stroke-width="1"/>
+              <line x1="62" y1="60" x2="100" y2="60" stroke="#1a1612" stroke-width="1"/>
+              <line x1="62" y1="68" x2="108" y2="68" stroke="#1a1612" stroke-width="1"/>
+              <line x1="62" y1="76" x2="96" y2="76" stroke="#1a1612" stroke-width="1"/>
+              <line x1="62" y1="84" x2="104" y2="84" stroke="#1a1612" stroke-width="1"/>
+              <line x1="62" y1="92" x2="86" y2="92" stroke="#1a1612" stroke-width="1"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="chain reveal">
+      <div class="chain-node"><span class="chain-num">01</span><span class="chain-label">灵感</span></div>
+      <span class="chain-sep">→</span>
+      <div class="chain-node"><span class="chain-num">02</span><span class="chain-label">底稿</span></div>
+      <span class="chain-sep">→</span>
+      <div class="chain-node"><span class="chain-num">03</span><span class="chain-label">评估</span></div>
+      <span class="chain-sep">→</span>
+      <div class="chain-node"><span class="chain-num">04</span><span class="chain-label">生成</span></div>
+      <span class="chain-sep">→</span>
+      <div class="chain-node"><span class="chain-num">05</span><span class="chain-label">迭代</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-cap">
+  <div class="wrap">
+    <div class="eyebrow reveal">核心能力</div>
+    <h2 class="sec-title reveal">剧现不是一个聊天框，而是一套 Agent 化创作<span class="big">流程</span>。</h2>
+
+    <div class="cap-cards">
+      <div class="cap-card reveal">
+        <h3>听得懂复杂的话</h3>
+        <p>你可以用自然语言提出带条件、分阶段、多目标的创作任务。剧现会拆解任务，而不是只回答一句。</p>
+        <div class="cap-example">例如：先参考某类作品的情绪内核写短剧大纲，确认后再生成分集；主角必须从低谷逐步成长，不能突然开挂；先给两个版本，再比较哪一版更适合短剧节奏。</div>
+      </div>
+      <div class="cap-card reveal">
+        <h3>扛得住长程创作</h3>
+        <p>长篇创作最难的不是写第一集，而是写到第 30 集、第 60 集时仍然不崩。剧现会把人物、世界观、伏笔、版本和修改目标沉淀为结构化记忆，在后续生成、扩写和改写中持续调用，减少中段衰减、人设漂移和设定遗忘。</p>
+      </div>
+      <div class="cap-card reveal">
+        <h3>给得出稳定评估</h3>
+        <p>好的创作工具不能只会夸。剧现的评估体系会围绕创意、结构、人物、节奏、情绪、台词、市场和可拍性给出稳定反馈，让创作者、制片和发行都能更快判断一个故事是否值得继续开发。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="inline-cta reveal">
+  <a href="#apply">准备好了？申请内测资格 →</a>
+</div>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow reveal">结构化记忆</div>
+    <h2 class="sec-title reveal">真正的搭档，要记得住你的<span class="big">故事</span>。</h2>
+    <p class="pullquote reveal">剧现的记忆不是把聊天记录塞进上下文，而是把长程创作中最关键的变量结构化保存下来。</p>
+
+    <div class="mem-visual reveal">
+      <span class="mem-visual-label">STRUCTURED MEMORY · 四层结构化记忆</span>
+
+      <div class="mem-grid">
+        <div class="mem-cell">
+          <div class="mem-cell-head">
+            <span class="mem-cell-num">01</span>
+            <div class="mem-cell-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="3.5"/>
+                <path d="M5 20c0-4 3-6 7-6s7 2 7 6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mem-cell-title">人物</div>
+          <div class="mem-cell-en">CHARACTER</div>
+          <ul class="mem-cell-list">
+            <li>性格 · 动机</li>
+            <li>关系 · 立场</li>
+            <li>弧光 · 成长</li>
+          </ul>
+        </div>
+
+        <div class="mem-cell">
+          <div class="mem-cell-head">
+            <span class="mem-cell-num">02</span>
+            <div class="mem-cell-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <ellipse cx="12" cy="12" rx="4" ry="9"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mem-cell-title">世界观</div>
+          <div class="mem-cell-en">WORLD</div>
+          <ul class="mem-cell-list">
+            <li>设定 · 规则</li>
+            <li>限制 · 边界</li>
+            <li>信息差</li>
+          </ul>
+        </div>
+
+        <div class="mem-cell">
+          <div class="mem-cell-head">
+            <span class="mem-cell-num">03</span>
+            <div class="mem-cell-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v9a4 4 0 0 1-8 0v-1"/>
+                <path d="M9.5 5.5L12 3l2.5 2.5"/>
+                <line x1="14" y1="14" x2="20" y2="14" stroke-dasharray="2 2"/>
+                <circle cx="20" cy="14" r="1.6" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mem-cell-title">伏笔</div>
+          <div class="mem-cell-en">FORESHADOW</div>
+          <ul class="mem-cell-list">
+            <li>已埋 · 待触发</li>
+            <li>已回收</li>
+            <li>跨集呼应</li>
+          </ul>
+        </div>
+
+        <div class="mem-cell">
+          <div class="mem-cell-head">
+            <span class="mem-cell-num">04</span>
+            <div class="mem-cell-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="13" height="15" rx="1"/>
+                <rect x="8" y="6" width="13" height="15" rx="1" fill="#faf8f4"/>
+              </svg>
+            </div>
+          </div>
+          <div class="mem-cell-title">版本</div>
+          <div class="mem-cell-en">VERSION</div>
+          <ul class="mem-cell-list">
+            <li>v1 · v2 · v3</li>
+            <li>分叉 · 合并</li>
+            <li>修改目标</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mem-cards reveal">
+      <div class="mem-card">
+        <h3>记忆作为约束</h3>
+        <p>人物设定、世界观规则、伏笔状态和信息差会成为创作过程中的 guardrail。续写时，剧现不只是"想起它们"，而是用它们约束生成结果，降低人物突然变形、规则前后矛盾、伏笔丢失的问题。</p>
+      </div>
+      <div class="mem-card">
+        <h3>记忆作为历史</h3>
+        <p>每一轮修改目标、生成结果、评估分数和版本文件都会被保留下来。你可以回到某个版本继续改，也可以从同一个故事分叉出不同方向。</p>
+      </div>
+      <div class="mem-card">
+        <h3>记忆属于创作者</h3>
+        <p>你的风格、偏好和创作习惯只属于你。剧现会越来越懂你的写法，但不会把你的个人创作记忆跨账号共享。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow reveal">适合谁</div>
+    <h2 class="sec-title reveal">我们正在寻找第一批认真创作的人。</h2>
+
+    <div class="audience-split reveal">
+      <div class="audience-yes">
+        <div class="audience-badge">适合申请</div>
+        <ul>
+          <li>编剧、导演、制片和内容开发者</li>
+          <li>短剧、网剧、网大、互动叙事和游戏剧情创作者</li>
+          <li>正在把原创想法发展成可评估剧本的人</li>
+          <li>需要高效评估大量剧本或 IP 底稿的团队</li>
+          <li>已经在使用通用 AI，但希望它更懂长篇故事的人</li>
+        </ul>
+      </div>
+      <div class="audience-no">
+        <p>如果你只是想体验一次简单聊天或随机生成几句台词，剧现可能不是最轻量的选择。我们更希望早期名额给到正在真实推进故事项目的人。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="eyebrow reveal">常见问题</div>
+    <h2 class="sec-title reveal">FAQ</h2>
+
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-q">申请流程是什么样的？</div>
+        <div class="faq-a">填写申请 → 人工审核 → 短信发码 → 开始创作。提交手机号和创作信息后，我们会优先邀请真实创作者和内容团队参与内测，审核通过后专属邀请码将通过短信发送到你填写的手机号。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">申请后多久能收到邀请码？</div>
+        <div class="faq-a">内测阶段采用人工审核。审核通过后，我们会通过短信发送专属邀请码。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">邀请码可以转给别人吗？</div>
+        <div class="faq-a">不可以。邀请码与你申请时填写的手机号绑定，注册时必须使用同一个手机号。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">提交申请后可以重复提交吗？</div>
+        <div class="faq-a">同一手机号无需重复提交。如果你已经提交申请，页面会显示当前状态。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">为什么需要填写创作身份和使用场景？</div>
+        <div class="faq-a">剧现仍处于早期打磨阶段，我们希望优先邀请真实创作者和内容团队参与内测，帮助产品建立高质量反馈闭环。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">剧现会替我写完整个故事吗？</div>
+        <div class="faq-a">剧现会帮助你把灵感问清楚、把结构评估出来、把长篇创作推进下去。但故事的方向、判断和表达，始终属于创作者。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="apply-sec" id="apply">
+  <div class="wrap">
+    <div class="apply-layout">
+      <div class="apply-intro reveal" id="apply-intro">
+        <h2>申请内测资格</h2>
+        <p>只需 3 项必填，其余可不填。</p>
+      </div>
+
+      <div class="apply-status reveal" id="apply-status">
+        <div class="apply-status-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12l5 5L20 7"/>
+          </svg>
+          <span>申请已提交 · 审核中</span>
+        </div>
+        <h3>我们已收到你的内测申请</h3>
+        <div class="apply-status-meta">
+          <div class="meta-item">
+            <span class="meta-label">PHONE</span>
+            <span class="meta-value" id="status-phone">—</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">SUBMITTED</span>
+            <span class="meta-value" id="status-time">—</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">STATUS</span>
+            <span class="meta-value is-pending">人工审核中</span>
+          </div>
+        </div>
+        <p class="apply-status-desc">
+          审核通过后，专属邀请码会通过短信发送到上述手机号。如长时间未收到，请检查短信拦截或联系我们。
+        </p>
+        <div class="apply-status-actions">
+          <button type="button" id="reset-submission">提交了错误号码？重新申请 →</button>
+        </div>
+      </div>
+
+      <form class="apply-form reveal" id="apply-form" novalidate>
+        <div class="form-banner" id="form-banner" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <line x1="12" y1="8" x2="12" y2="13"/>
+            <line x1="12" y1="16" x2="12" y2="16.5"/>
+          </svg>
+          <span id="form-banner-text"></span>
+        </div>
+
+        <div class="form-group">
+          <div class="field-row">
+            <div class="field" data-field="phone">
+              <label>手机号<span class="req">*</span></label>
+              <input name="phone" type="tel" placeholder="用于接收审核结果" autocomplete="tel" inputmode="numeric" maxlength="11">
+              <div class="field-error"></div>
+            </div>
+            <div class="field" data-field="code">
+              <label>短信验证码<span class="req">*</span></label>
+              <div class="code-row">
+                <input name="code" type="text" placeholder="验证码" inputmode="numeric" maxlength="6">
+                <button type="button" class="code-btn" id="send-code">获取验证码</button>
+              </div>
+              <div class="field-error"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="field" data-field="email">
+            <label>邮箱</label>
+            <input name="email" type="email" placeholder="选填，用于发送邀请邮件" autocomplete="email" maxlength="80">
+            <div class="field-error"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="field-row">
+            <div class="field" data-field="role">
+              <label>身份角色<span class="req">*</span></label>
+              <select name="role">
+                <option value="">请选择</option>
+                <option>编剧</option>
+                <option>导演</option>
+                <option>制片</option>
+                <option>游戏策划</option>
+                <option>内容运营</option>
+                <option>其他创作者</option>
+              </select>
+              <div class="field-error"></div>
+            </div>
+            <div class="field" data-field="frequency">
+              <label>创作频次</label>
+              <select name="frequency">
+                <option value="">请选择</option>
+                <option>每周多次</option>
+                <option>每周 1 次</option>
+                <option>每月几次</option>
+                <option>偶尔创作</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <fieldset>
+            <legend>使用场景</legend>
+            <div class="chips">
+              <label><input type="checkbox" name="scene"><span>影视剧本创作</span></label>
+              <label><input type="checkbox" name="scene"><span>游戏剧情设计</span></label>
+              <label><input type="checkbox" name="scene"><span>互动叙事</span></label>
+              <label><input type="checkbox" name="scene"><span>教育培训</span></label>
+              <label><input type="checkbox" name="scene"><span>个人兴趣创作</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="form-group">
+          <fieldset>
+            <legend>辅助工具</legend>
+            <div class="chips">
+              <label><input type="checkbox" name="tool"><span>Final Draft</span></label>
+              <label><input type="checkbox" name="tool"><span>大纲草稿软件</span></label>
+              <label><input type="checkbox" name="tool"><span>通用 AI 工具</span></label>
+              <label><input type="checkbox" name="tool"><span>纯手写或文档</span></label>
+              <label><input type="checkbox" name="tool"><span>暂无</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="form-group">
+          <div class="field-row">
+            <div class="field" data-field="channel">
+              <label>信息渠道</label>
+              <select name="channel">
+                <option value="">你从哪里了解到剧现</option>
+                <option>微信公众号</option>
+                <option>朋友推荐</option>
+                <option>社交媒体</option>
+                <option>行业活动</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="field" data-field="expectation">
+              <label>期待解决的问题</label>
+              <input name="expectation" type="text" placeholder="如：长篇人设写崩" maxlength="100">
+            </div>
+          </div>
+        </div>
+
+        <button class="submit-btn" type="submit" id="submit-btn">提交申请</button>
+        <p class="form-hint">限量审核 · 通过后短信发送邀请码 · 同一手机号无需重复提交</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2 class="reveal"><span class="big">故事</span>，永远属于创作者。</h2>
+    <p class="reveal">剧现 · Puzle Script</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="letter-spacing:0.4em">剧现 · 让 AI 陪你写完整部作品</div>
+</footer>
+
+<div class="modal-overlay" id="success-modal" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="关闭">×</button>
+    <div class="modal-badge">申请已提交</div>
+    <h2>我们已收到你的内测申请</h2>
+    <p>感谢你申请剧现内测资格。我们会根据当前名额、创作身份和使用场景进行人工审核。审核通过后，你将收到短信通知，并可使用手机号和邀请码完成注册。</p>
+    <button class="btn-main modal-ok" type="button">我知道了</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="duplicate-modal" aria-hidden="true">
+  <div class="modal-card is-duplicate" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="关闭">×</button>
+    <div class="modal-badge">已申请过</div>
+    <h2>该手机号已提交过申请</h2>
+    <p>你之前提交的申请正在审核中，无需重复提交。审核通过后，专属邀请码会通过短信发送到这个号码。如长时间未收到，请检查短信拦截或联系我们。</p>
+    <button class="btn-main modal-ok" type="button">我知道了</button>
+  </div>
+</div>
+
+<script>
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+const form = document.querySelector('#apply-form');
+const submitBtn = document.querySelector('#submit-btn');
+const successModal = document.querySelector('#success-modal');
+const duplicateModal = document.querySelector('#duplicate-modal');
+const banner = document.querySelector('#form-banner');
+const bannerText = document.querySelector('#form-banner-text');
+const sendCode = document.querySelector('#send-code');
+const introEl = document.querySelector('#apply-intro');
+const statusEl = document.querySelector('#apply-status');
+const statusPhoneEl = document.querySelector('#status-phone');
+const statusTimeEl = document.querySelector('#status-time');
+const resetBtn = document.querySelector('#reset-submission');
+
+const STORAGE_KEY = 'puzle_submitted_phones';
+const STATUS_KEY = 'puzle_last_submission';
+const DEMO_SUBMITTED = ['13800138000', '13900000000'];
+const PHONE_REGEX = /^1[3-9]\d{9}$/;
+const CODE_REGEX = /^\d{4,6}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function readSubmitted() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+function isAlreadySubmitted(phone) {
+  return DEMO_SUBMITTED.includes(phone) || readSubmitted().includes(phone);
+}
+function markSubmitted(phone) {
+  const list = readSubmitted();
+  if (!list.includes(phone)) {
+    list.push(phone);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }
+}
+
+function readSubmissionStatus() {
+  try {
+    return JSON.parse(localStorage.getItem(STATUS_KEY) || 'null');
+  } catch {
+    return null;
+  }
+}
+function writeSubmissionStatus(phone) {
+  localStorage.setItem(STATUS_KEY, JSON.stringify({
+    phone,
+    submittedAt: new Date().toISOString()
+  }));
+}
+function clearSubmissionStatus() {
+  localStorage.removeItem(STATUS_KEY);
+}
+function maskPhone(phone) {
+  return phone.replace(/^(\d{3})\d{4}(\d{4})$/, '$1 **** $2');
+}
+function formatSubmittedTime(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())}  ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function showStatusView(submission) {
+  statusPhoneEl.textContent = maskPhone(submission.phone);
+  statusTimeEl.textContent = formatSubmittedTime(submission.submittedAt);
+  introEl.classList.add('is-hidden');
+  form.classList.add('is-hidden');
+  statusEl.classList.add('is-visible');
+}
+function showFormView() {
+  statusEl.classList.remove('is-visible');
+  introEl.classList.remove('is-hidden');
+  form.classList.remove('is-hidden');
+}
+
+const existingSubmission = readSubmissionStatus();
+if (existingSubmission && existingSubmission.phone) {
+  showStatusView(existingSubmission);
+}
+
+resetBtn.addEventListener('click', () => {
+  if (!confirm('确认重新申请吗？这会清除当前申请记录。')) return;
+  const prev = readSubmissionStatus();
+  if (prev && prev.phone) {
+    const list = readSubmitted().filter(p => p !== prev.phone);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }
+  clearSubmissionStatus();
+  form.reset();
+  form.querySelectorAll('select').forEach(s => s.classList.remove('has-value'));
+  clearAllErrors();
+  showFormView();
+  introEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+function getField(name) {
+  return form.querySelector(`.field[data-field="${name}"]`);
+}
+function setFieldError(name, msg) {
+  const f = getField(name);
+  if (!f) return;
+  f.classList.add('has-error');
+  const slot = f.querySelector('.field-error');
+  if (slot) slot.textContent = msg;
+}
+function clearFieldError(name) {
+  const f = getField(name);
+  if (f) f.classList.remove('has-error');
+}
+function clearAllErrors() {
+  form.querySelectorAll('.field.has-error').forEach(f => f.classList.remove('has-error'));
+  hideBanner();
+}
+function showBanner(msg) {
+  bannerText.textContent = msg;
+  banner.classList.add('is-visible');
+}
+function hideBanner() {
+  banner.classList.remove('is-visible');
+}
+
+function openModal(modalEl) {
+  modalEl.classList.add('visible');
+  modalEl.setAttribute('aria-hidden', 'false');
+}
+function closeModal(modalEl) {
+  modalEl.classList.remove('visible');
+  modalEl.setAttribute('aria-hidden', 'true');
+}
+
+[successModal, duplicateModal].forEach(m => {
+  m.querySelectorAll('.modal-close, .modal-ok').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(m));
+  });
+  m.addEventListener('click', (e) => {
+    if (e.target === m) closeModal(m);
+  });
+});
+
+form.querySelectorAll('input, select').forEach(el => {
+  const fieldEl = el.closest('.field');
+  if (!fieldEl) return;
+  const name = fieldEl.dataset.field;
+  if (!name) return;
+  el.addEventListener('input', () => clearFieldError(name));
+  el.addEventListener('change', () => clearFieldError(name));
+});
+
+const phoneInput = form.querySelector('input[name="phone"]');
+phoneInput.addEventListener('input', () => {
+  phoneInput.value = phoneInput.value.replace(/\D/g, '').slice(0, 11);
+});
+const codeInput = form.querySelector('input[name="code"]');
+codeInput.addEventListener('input', () => {
+  codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+});
+
+function validateForm() {
+  let firstError = null;
+  clearAllErrors();
+
+  const phone = (form.elements.phone.value || '').trim();
+  const code = (form.elements.code.value || '').trim();
+  const role = (form.elements.role.value || '').trim();
+
+  if (!phone) {
+    setFieldError('phone', '请填写手机号');
+    firstError = firstError || 'phone';
+  } else if (!PHONE_REGEX.test(phone)) {
+    setFieldError('phone', '请输入正确的手机号');
+    firstError = firstError || 'phone';
+  }
+
+  if (!code) {
+    setFieldError('code', '请填写验证码');
+    firstError = firstError || 'code';
+  } else if (!CODE_REGEX.test(code)) {
+    setFieldError('code', '请输入 4-6 位数字验证码');
+    firstError = firstError || 'code';
+  }
+
+  if (!role) {
+    setFieldError('role', '请选择身份角色');
+    firstError = firstError || 'role';
+  }
+
+  const email = (form.elements.email.value || '').trim();
+  if (email && !EMAIL_REGEX.test(email)) {
+    setFieldError('email', '请输入正确的邮箱格式');
+    firstError = firstError || 'email';
+  }
+
+  return { ok: !firstError, firstError, phone };
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (submitBtn.disabled) return;
+
+  const { ok, firstError, phone } = validateForm();
+  if (!ok) {
+    showBanner('表单尚有未填写的必填项，请检查后再提交。');
+    const target = getField(firstError);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const focusable = target.querySelector('input, select');
+      if (focusable) setTimeout(() => focusable.focus({ preventScroll: true }), 320);
+    }
+    return;
+  }
+
+  if (isAlreadySubmitted(phone)) {
+    openModal(duplicateModal);
+    return;
+  }
+
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = '提交中…';
+
+  setTimeout(() => {
+    markSubmitted(phone);
+    writeSubmissionStatus(phone);
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+    form.reset();
+    form.querySelectorAll('select').forEach(s => s.classList.remove('has-value'));
+    showStatusView({ phone, submittedAt: new Date().toISOString() });
+    setTimeout(() => statusEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }, 700);
+});
+
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+document.querySelectorAll('.field select').forEach(sel => {
+  sel.addEventListener('change', () => {
+    sel.classList.toggle('has-value', sel.value !== '');
+  });
+});
+
+let codeTimer = null;
+sendCode.addEventListener('click', () => {
+  if (sendCode.disabled) return;
+
+  const phone = (phoneInput.value || '').trim();
+  clearFieldError('phone');
+
+  if (!phone) {
+    setFieldError('phone', '请先填写手机号');
+    phoneInput.focus();
+    return;
+  }
+  if (!PHONE_REGEX.test(phone)) {
+    setFieldError('phone', '请输入正确的手机号');
+    phoneInput.focus();
+    return;
+  }
+  if (isAlreadySubmitted(phone)) {
+    openModal(duplicateModal);
+    return;
+  }
+
+  let seconds = 60;
+  sendCode.disabled = true;
+  sendCode.textContent = `${seconds}s`;
+  codeTimer = setInterval(() => {
+    seconds -= 1;
+    sendCode.textContent = `${seconds}s`;
+    if (seconds <= 0) {
+      clearInterval(codeTimer);
+      sendCode.disabled = false;
+      sendCode.textContent = '获取验证码';
+    }
+  }, 1000);
+});
+</script>
+
+</body>
+</html>
